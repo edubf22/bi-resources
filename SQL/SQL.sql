@@ -1,3 +1,21 @@
+-- Alter column data types
+ALTER TABLE [table]
+ADD [Column1] nvarchar(255),
+    [Column2] nvarchar(50),
+    [Column3] nvarchar(100);
+
+-- Create a Stored Procedure
+CREATE PROCEDURE dbo.TruncateTable
+AS
+BEGIN
+    DELETE FROM [fact Sell-Through];
+END;
+
+-- Drop Table or View
+DROP TABLE [dbo].[tablename];
+DROP VIEW [dbo].[viewname];
+
+-- Date dimension
 CREATE VIEW [dbo].[dim_date_vw]
 AS
 -- Create the Numbers CTE
@@ -18,7 +36,7 @@ Numbers AS (
 ),
 DateSequence AS (
     SELECT 
-        DATEADD(DAY, N - 1, '2009-01-01') AS Calendar_Date
+        DATEADD(DAY, N - 1, '2009-01-01') AS Calendar_Date -- Change the period in first parameter
     FROM Numbers
 )
 

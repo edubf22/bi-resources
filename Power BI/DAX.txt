@@ -1,0 +1,24 @@
+-- Last 12 Month Sales (no variables)
+/*
+CALCULATE (
+    SUM('Table'[Sales]),
+    DATESINPERIOD ( 'Date'[Date],
+                    MAX ( 'Date'[Date] ),
+                    -12,
+                    MONTH
+    )
+)*/
+
+-- Last 12 Month Sales (using variables)
+L12MSales = 
+VAR vSales = SUM('Table'[Sales])
+VAR vMax = MAX(SlicerDate[Date Key])
+VAR vMin = vMax - 10000
+VAR vL12M = 
+CALCULATE (
+    SUM('Sell-Through'[Sales]),
+    'Sell-Through'[Date Key] <= vMax,
+    'Sell-Through'[Date Key] >- vMin
+    )
+RETURN
+vL12M

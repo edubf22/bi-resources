@@ -11,14 +11,39 @@ CALCULATE (
 
 -- Last 12 Month Sales (using variables)
 L12MSales = 
-VAR vSales = SUM('Table'[Sales])
 VAR vMax = MAX(SlicerDate[Date Key])
 VAR vMin = vMax - 10000
 VAR vL12M = 
 CALCULATE (
-    SUM('Sell-Through'[Sales]),
-    'Sell-Through'[Date Key] <= vMax,
-    'Sell-Through'[Date Key] >- vMin
+    SUM('Table'[Sales]),
+    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] >= vMin
     )
 RETURN
 vL12M
+
+-- Last 3 Month Sales
+L3MSales = 
+VAR vMax = MAX(SlicerDate[Date Key]) -- Note that this is an 'int' type date key, not an actual date
+VAR vMin = vMax - 300
+VAR vL3M = 
+CALCULATE (
+    SUM('Table'[Sales]),
+    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] >= vMin
+    )
+RETURN
+vL3M
+
+-- Last Month Sales
+LMSales = 
+VAR vMax = MAX(SlicerDate[Date Key])
+VAR vMin = vMax - 100
+VAR vLM = 
+CALCULATE (
+    SUM('Table'[Sales]),
+    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] >- vMin
+    )
+RETURN
+vLM

@@ -68,3 +68,15 @@ in
 
 // Add Fiscal Year column to a date dimension Table
 = Table.AddColumn(#"<Previous step name", "FY Year", each if [Month Number] >= parFYStart then [Year] + 1 else [Year], Int64.Type) // this is using a parameter with the month number of FY start
+
+// Add Fiscal Year month to a date dimension table
+= Table.AddColumn(#"Added Custom", "FY Month", each if Date.Month([Date]) <= 9 then Date.Month([Date]) + 3 else Date.Month([Date]) - 9, Int64.Type) // This assumes the FY end month is 9, and '3' comes from 12 months in a year -9 (FY end)
+
+// Add Fiscal Year quarter to a date dimension table
+= Table.AddColumn(#"Added Custom1", "FY Quarter", each Number.RoundUp([FY Month]/3), Int64.Type)
+
+// Create string with 'FY <YYYY>' for display
+= Table.AddColumn(#"Added Custom2", "FY String", each "FY " & Text.From([FY Year])) // where [FY Year] is of Int type
+
+
+

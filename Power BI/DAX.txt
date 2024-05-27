@@ -24,7 +24,7 @@ vL12M
 
 -- Last 3 Month Sales
 L3MSales = 
-VAR vMax = MAX(SlicerDate[Date Key]) -- Note that this is an 'int' type date key, not an actual date
+VAR vMax = MAX(SlicerDate[Date Key]) -- Does not work well if we are going back over years, like in 20240101
 VAR vMin = vMax - 300
 VAR vL3M = 
 CALCULATE (
@@ -38,12 +38,61 @@ vL3M
 -- Last Month Sales
 LMSales = 
 VAR vMax = MAX(SlicerDate[Date Key])
-VAR vMin = vMax - 100
+VAR vMin = vMax - 100 -- Does not work well if we are going back over years, like in 20240101
 VAR vLM = 
 CALCULATE (
     SUM('Table'[Sales]),
     'Table'[Date Key] <= vMax,
-    'Table'[Date Key] >- vMin
+    'Table'[Date Key] >= vMin
     )
 RETURN
 vLM
+
+-- Last 12 Month Sales using EDATE()
+L12MSales = 
+VAR vMax = MAX(SlicerDate[Date Key])
+VAR vMin = VALUE(FORMAT(EDATE(MAX(SlicerDate[Date]),-12),"YYYYMMDD"))
+VAR vL12M = 
+CALCULATE (
+    SUM('Table'[Sales]),
+    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] >= vMin
+    )
+RETURN
+vL12M
+
+-- Calculate YoY growth based on a numerical measure
+L12MSales YoY% = 
+IF(
+	ISFILTERED('SlicerDate'[Date]),
+	ERROR("Time intelligence quick measures can only be grouped or filtered by the Power BI-provided date hierarchy or primary date column."),
+	VAR __PREV_YEAR = CALCULATE([L12MSales], DATEADD('SlicerDate'[Date].[Date], -1, YEAR))
+	RETURN
+		DIVIDE([L12MSales] - __PREV_YEAR, __PREV_YEAR)
+)
+
+-- Calculate CAGR 
+// First, define beginning year value to look at sales: 
+_Sales Min Year = 
+VAR _minyear = Min('Table'[Year])
+VAR _tbl = FILTER('Table', 'Table'[Year] = _minyear)
+
+RETURN
+SUMX(_tbl, 'Table'[Sales])
+
+// Similarly, determine ending year value for the sales period:
+_Sales Max Year = 
+VAR _maxyear = MAX('Table'[Year])
+VAR _tbl = FILTER('Table', 'Table'[Year] = _maxyear)
+
+RETURN
+SUMX(_tbl, 'Table'[Sales])
+
+// Calculate CAGR using the above calculate values
+Sales CAGR = 
+VAR _Growth = DIVIDE([_Sales Max Year] - [_Sales Min Year], [_Sales Min Year], 0)
+VAR _Years = 2
+VAR _CAGR = POWER(1 + _Growth, 1 / _Years)
+RETURN
+_CAGR
+//FORMAT(_CAGR, "+0.0%; -0.0%")

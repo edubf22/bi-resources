@@ -16,7 +16,7 @@ VAR vMin = vMax - 10000
 VAR vL12M = 
 CALCULATE (
     SUM('Table'[Sales]),
-    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] < vMax,
     'Table'[Date Key] >= vMin
     )
 RETURN
@@ -29,7 +29,7 @@ VAR vMin = vMax - 300
 VAR vL3M = 
 CALCULATE (
     SUM('Table'[Sales]),
-    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] < vMax,
     'Table'[Date Key] >= vMin
     )
 RETURN
@@ -42,7 +42,7 @@ VAR vMin = vMax - 100 -- Does not work well if we are going back over years, lik
 VAR vLM = 
 CALCULATE (
     SUM('Table'[Sales]),
-    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] < vMax,
     'Table'[Date Key] >= vMin
     )
 RETURN
@@ -55,7 +55,7 @@ VAR vMin = VALUE(FORMAT(EDATE(MAX(SlicerDate[Date]),-12),"YYYYMMDD"))
 VAR vL12M = 
 CALCULATE (
     SUM('Table'[Sales]),
-    'Table'[Date Key] <= vMax,
+    'Table'[Date Key] < vMax,
     'Table'[Date Key] >= vMin
     )
 RETURN

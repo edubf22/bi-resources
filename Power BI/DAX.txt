@@ -1,3 +1,11 @@
+/* This file contains DAX measures that I've found useful. 
+Notes:
+ - Make sure the date dimension is marked as a date table for time intelligence functions to work properly.
+ - Check data types when loading the model and creating measures.
+ - Check table relationships in the model tab to ensure proper functioning of measures. 
+ - Remember to update table and column names when reusing these.
+*/
+
 -- Last 12 Month Sales (no variables)
 /*
 CALCULATE (
@@ -35,7 +43,7 @@ CALCULATE (
 RETURN
 vL3M
 
--- Last Month Sales
+-- Last Month Sales (this may not be needed since when there is a month slicer on the page, the sum of sales would be filtered to the selected month already) 
 LMSales = 
 VAR vMax = MAX(SlicerDate[Date Key])
 VAR vMin = vMax - 100 -- Does not work well if we are going back over years, like in 20240101
@@ -96,3 +104,5 @@ VAR _CAGR = POWER(1 + _Growth, 1 / _Years)
 RETURN
 _CAGR
 //FORMAT(_CAGR, "+0.0%; -0.0%")
+
+// 

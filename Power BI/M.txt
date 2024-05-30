@@ -66,6 +66,8 @@ let
 in
     #"Changed Type5"
 
+/* The following are fiscal year calculations. When possible, do these further up in the source (e.g. at the SQL database when creating the date dimension)*/
+
 // Add Fiscal Year column to a date dimension Table
 = Table.AddColumn(#"<Previous step name", "FY Year", each if [Month Number] >= parFYStart then [Year] + 1 else [Year], Int64.Type) // this is using a parameter with the month number of FY start
 

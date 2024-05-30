@@ -1,6 +1,6 @@
 /* Notes: 
     - This script contains a collection of SQL commands that I've found useful in my work.
-    - Make sure to include the appropriate database and table names when reusing the scripts.
+    - Make sure to include the appropriate database, schema and table names when reusing the scripts.
     - Ensure the correct data types are used.
     - When possible, create CTEs to avoid calculating the same values multiple times.
     - The script is organized by the following sections:

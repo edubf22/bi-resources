@@ -6,18 +6,20 @@ Notes:
  - Remember to update table and column names when reusing these.
 */
 
--- Last 12 Month Sales (no variables)
-/*
-CALCULATE (
-    SUM('Table'[Sales]),
-    DATESINPERIOD ( 'Date'[Date],
-                    MAX ( 'Date'[Date] ),
-                    -12,
-                    MONTH
-    )
-)*/
+-- Last 12 Month Sales (with proper date table)
+L12MSales = 
+VAR _NumOfMonths = -12
 
--- Last 12 Month Sales (using variables)
+RETURN
+CALCULATE (
+    SUMX (
+        VALUES ( 'Date'[YearMonth] ),
+        [Total Sales]
+    ),
+    DATESINPERIOD ( 'Date'[Date],  MAX ( 'Date'[Date] ), _NumOfMonths, MONTH )
+)
+
+-- Last 12 Month Sales (using raw datekey value)
 L12MSales = 
 VAR vMax = MAX(SlicerDate[Date Key])
 VAR vMin = vMax - 10000
@@ -30,7 +32,22 @@ CALCULATE (
 RETURN
 vL12M
 
--- Last 3 Month Sales
+-- Last 12 Month Sales Growth
+vs PY% = 
+VAR _CY = [Total Sales]
+VAR _PY = CALCULATE (
+    [Total Sales],
+    /*PREVIOUSMONTH( 'Date'[Date] )  //Added for measure testing*/
+    SAMEPERIODLASTYEAR( Dates[Date] )
+)
+VAR Result = DIVIDE(
+    _CY - _PY,
+    _PY
+)
+RETURN
+    Result
+
+-- Last 3 Month Sales (without proper date table)
 L3MSales = 
 VAR vMax = MAX(SlicerDate[Date Key]) -- Does not work well if we are going back over years, like in 20240101
 VAR vMin = vMax - 300
@@ -43,8 +60,38 @@ CALCULATE (
 RETURN
 vL3M
 
+-- Last 3 Month Sales (with proper date table)
+L3MSales = 
+VAR _NumOfMonths = -3
+
+RETURN
+CALCULATE (
+    SUMX (
+        VALUES ( 'Date'[YearMonth] ),
+        [Total Sales]
+    ),
+    DATESINPERIOD ( 'Date'[Date],  MAX ( 'Date'[Date] ), _NumOfMonths, MONTH )
+)
+
+-- Last 3 Month Sales Growth 
+vs L3M% = 
+VAR _CM = [L3MSales]
+VAR _P3M = CALCULATE (
+    [L3MSales],
+    PARALLELPERIOD( 'Date'[Date], -3, MONTH )
+)
+VAR Result = DIVIDE(
+    _CM - _P3M,
+    _P3M
+)
+RETURN
+    Result
+
+-- Last Month Sales 
+L1MSales = [Total Sales]
+
 -- Last Month Sales (this may not be needed since when there is a month slicer on the page, the sum of sales would be filtered to the selected month already) 
-LMSales = 
+L1MSales = 
 VAR vMax = MAX(SlicerDate[Date Key])
 VAR vMin = vMax - 100 -- Does not work well if we are going back over years, like in 20240101
 VAR vLM = 
@@ -55,6 +102,21 @@ CALCULATE (
     )
 RETURN
 vLM
+
+-- Last Month Sales Growth 
+vs LM% = 
+VAR _CM = [L1MSales]
+VAR _PM = CALCULATE (
+    [L1MSales],
+    PREVIOUSMONTH( 'Date'[Date] )
+)
+VAR Result = DIVIDE(
+    _CM - _PM,
+    _PM
+)
+RETURN
+    Result
+
 
 -- Last 12 Month Sales using EDATE()
 L12MSales = 
@@ -69,40 +131,29 @@ CALCULATE (
 RETURN
 vL12M
 
--- Calculate YoY growth based on a numerical measure
-L12MSales YoY% = 
-IF(
-	ISFILTERED('SlicerDate'[Date]),
-	ERROR("Time intelligence quick measures can only be grouped or filtered by the Power BI-provided date hierarchy or primary date column."),
-	VAR __PREV_YEAR = CALCULATE([L12MSales], DATEADD('SlicerDate'[Date].[Date], -1, YEAR))
-	RETURN
-		DIVIDE([L12MSales] - __PREV_YEAR, __PREV_YEAR)
-)
-
 -- Calculate CAGR 
-// First, define beginning year value to look at sales: 
-_Sales Min Year = 
-VAR _minyear = Min('Table'[Year])
-VAR _tbl = FILTER('Table', 'Table'[Year] = _minyear)
-
+2YrRolling CAGR =
+VAR _YearsBack = 2
+VAR _CY = CALCULATE (
+    SUMX (
+        VALUES ( 'Date'[YearMonth] ), // This should match the date slicer being used
+        [Sales]
+    ),
+    DATESINPERIOD( 'Date'[Date],  MAX ( 'Date'[Date] ), -12, MONTH )
+)
+VAR _PY = CALCULATE(
+    SUMX (
+        VALUES ( 'Date'[YearMonth] ),
+        [Sales]
+    ),
+    DATEADD( DATESINPERIOD( 'Date'[Date],  MAX ( 'Date'[Date] ), -12, MONTH ), -1 * _YearsBack, YEAR )
+)
+VAR _OverallGrowth = DIVIDE(
+    _CY ,
+    _PY,
+    0
+)
+VAR _CAGR = POWER( ( _OverallGrowth), (1 / _YearsBack) ) - 1
 RETURN
-SUMX(_tbl, 'Table'[Sales])
+    _CAGR
 
-// Similarly, determine ending year value for the sales period:
-_Sales Max Year = 
-VAR _maxyear = MAX('Table'[Year])
-VAR _tbl = FILTER('Table', 'Table'[Year] = _maxyear)
-
-RETURN
-SUMX(_tbl, 'Table'[Sales])
-
-// Calculate CAGR using the above calculate values
-Sales CAGR = 
-VAR _Growth = DIVIDE([_Sales Max Year] - [_Sales Min Year], [_Sales Min Year], 0)
-VAR _Years = 2
-VAR _CAGR = POWER(1 + _Growth, 1 / _Years)
-RETURN
-_CAGR
-//FORMAT(_CAGR, "+0.0%; -0.0%")
-
-// 

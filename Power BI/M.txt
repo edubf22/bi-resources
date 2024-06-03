@@ -80,5 +80,11 @@ in
 // Create string with 'FY <YYYY>' for display
 = Table.AddColumn(#"Added Custom2", "FY String", each "FY " & Text.From([FY Year])) // where [FY Year] is of Int type
 
+// Conditional logic to set a value based on a column value
+= Table.AddColumn(#"<Previous step name or Source>", "<New column name>", each 
+    if [Field] <> "<Value1>" and [Field] <> "<Value2>" and [Field] <> "<Value3>" and [Field] <> "<Value4>" and [Field] <> "<Value5>" and [Field] <> "" then "<NewValue" 
+    else [Field]
+)
+
 
 

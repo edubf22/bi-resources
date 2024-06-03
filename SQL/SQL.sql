@@ -22,7 +22,7 @@ ADD [Column1] nvarchar(255),
 CREATE PROCEDURE dbo.TruncateTable
 AS
 BEGIN
-    DELETE FROM [fact Sell-Through];
+    DELETE FROM [tablename];
 END;
 
 -- Drop Table or View
@@ -83,7 +83,7 @@ WITH E1(N) AS (
 ), cteDateRangeKeys AS (
 	SELECT 'start' = CAST( MIN( [DateKEY] ) AS CHAR(8) )
 	,'end' = CAST( MAX( [DateKEY] ) AS CHAR(8) )
-	FROM [dbo].[fact Sell-Through]
+	FROM [dbo].[fact tablename]
 ), cteDateRange AS (
 	SELECT 'start' = DATEFROMPARTS( LEFT( [start], 4 ), SUBSTRING( [start], 5, 2 ), RIGHT( [start], 2 ) )
 	, 'end' = DATEFROMPARTS( LEFT( [end], 4 ), SUBSTRING( [end], 5, 2 ), RIGHT( [end],2 ) )

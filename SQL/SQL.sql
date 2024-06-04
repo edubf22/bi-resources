@@ -137,3 +137,9 @@ FROM cteDates
 ;
 GO
 
+-- Query lakehouse in the same Fabric workspace
+SELECT 
+    Column1
+    , Column2
+    , Column3
+FROM <lakehousename>.<schemaname>.<tablename>;

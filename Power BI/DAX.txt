@@ -157,3 +157,22 @@ VAR _CAGR = POWER( ( _OverallGrowth), (1 / _YearsBack) ) - 1
 RETURN
     _CAGR
 
+-- Calculate Sales YTD
+Sales YTD = CALCULATE( 
+    SUM( 'Table'[column] ), 
+    DATESYTD( 'Date'[Date] ) 
+) 
+
+-- Sales FYTD
+Sales FYTD = CALCULATE( 
+    SUM( 'Table'[column] ), 
+    DATESYTD( 'Date'[Date], "end date of fiscal year e.g. 9-30" ) 
+)
+
+-- Sales QTD (calendar)
+Sales QTD = CALCULATE( 
+    SUM( 'Table'[column] ), 
+    DATESQTD( 'Date'[Date] ) 
+)
+
+-- Sales QTD (fiscal)

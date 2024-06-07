@@ -174,5 +174,3 @@ Sales QTD = CALCULATE(
     SUM( 'Table'[column] ), 
     DATESQTD( 'Date'[Date] ) 
 )
-
--- Sales QTD (fiscal)

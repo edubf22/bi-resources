@@ -86,6 +86,10 @@ in
     else [Field]
 )
 
+// Conditional logic to set a value based on a columns different values
+#"Custom Column" = Table.AddColumn(#"<Previous step name or source", "<New column name>", each if [Field] = "string" then "full string" else if [Field] = "string2" then "full string 2" else [Field], type text)
+
+
 // Code to concatenate different columns into a single column
 = Table.AddColumn(#"<Previous step name or Source>", "<New column name>", each Text.Combine({[Column1], [Column2], [Column3]}, " ")) -- second parameter is the preferred delimiter
 

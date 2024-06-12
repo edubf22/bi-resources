@@ -89,8 +89,19 @@ in
 // Conditional logic to set a value based on a columns different values
 #"Custom Column" = Table.AddColumn(#"<Previous step name or source", "<New column name>", each if [Field] = "string" then "full string" else if [Field] = "string2" then "full string 2" else [Field], type text)
 
-
 // Code to concatenate different columns into a single column
 = Table.AddColumn(#"<Previous step name or Source>", "<New column name>", each Text.Combine({[Column1], [Column2], [Column3]}, " ")) -- second parameter is the preferred delimiter
+
+// Filter file in a SharePoint folder, where [Folder Path] is the URL of the folder and [Name] is the file name
+let
+  Source = SharePoint.Files("<Root SharePoint URL>", [ApiVersion = 15]),
+  #"Filtered Rows" = Table.SelectRows(
+    Source, 
+    each ([Folder Path] = "<Target Folder Path>") 
+    and Text.StartsWith([Name], "<Prefix if any", Comparer.OrdinalIgnoreCase)
+    and Text.Contains([Name], "<Target substring", Comparer.OrdinalIgnoreCase)
+  )
+in
+  #"Filtered Rows"
 
 

@@ -194,5 +194,9 @@ IF(
     )
     , BLANK()
 )
--- Create a slicer and use 'Sales Period'[Measure] as the field to select the measure to display
+-- Then, create a slicer and use 'Sales Period'[Measure] as the field to select the measure to display
+
+-- Calculate the number of days between two dates
+Days Between Dates = DATEDIFF( MIN( 'Date'[Date] ), MAX( 'Date'[Date] ), DAY )
+
 

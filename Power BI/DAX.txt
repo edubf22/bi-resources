@@ -174,3 +174,25 @@ Sales QTD = CALCULATE(
     SUM( 'Table'[column] ), 
     DATESQTD( 'Date'[Date] ) 
 )
+
+-- Dynamically show a measure based on a slicer selection
+-- This example uses Sales Periods, such as Last Month, QTD, FYTD, etc.
+-- First, create table with index columns and measure names in Power Query using the "enter Data" option
+-- Then, create a measure to show the selected measure
+Sales Period Selection = 
+IF( 
+    ISCROSSFILTERED( 'Sales Period'[Measure] )
+    , SWITCH(
+        TRUE()
+        , VALUES( 'Sales Period'[Measure] ) = "Last Month", [Sales L1M] -- Change measure and period names as needed
+        , VALUES( 'Sales Period'[Measure] ) = "Last 3 Months", [Sales L3M]
+        , VALUES( 'Sales Period'[Measure] ) = "Last 12 Months", [Sales L12M]
+        , VALUES( 'Sales Period'[Measure] ) = "QTD", [Sales QTD]
+        , VALUES( 'Sales Period'[Measure] ) = "Calendar YTD", [Sales YTD]
+        , VALUES( 'Sales Period'[Measure] ) = "Fiscal YTD", [Sales FYTD]
+        , BLANK()
+    )
+    , BLANK()
+)
+-- Create a slicer and use 'Sales Period'[Measure] as the field to select the measure to display
+

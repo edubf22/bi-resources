@@ -25,3 +25,7 @@ target_table.alias("Target")\
 
 # Drop Temp Table
 spark.catalog.dropTempView("<TempViewName>")
+
+# Rename a column 
+df = df.withColumnRenamed("OriginalName", "NewName")
+display(df)

@@ -104,4 +104,13 @@ let
 in
   #"Filtered Rows"
 
+// Refer to a specific column by using its index number
+let
+    Source = Excel.CurrentWorkbook(){[Name="Sheet1"]}[Content],
+    ColumnName = Table.ColumnNames(Source){0}, // Change 0 to your desired column index
+    SelectedColumn = Table.SelectColumns(Source,{ColumnName})
+in
+    SelectedColumn
 
+// Use the values from the selected column to create a custom column - see above for ColumnName
+#"<New table name>" = Table.AddColumn(#"<table>", "<newColumnName>", each Record.Field(_, ColumnName), Int64.Type),

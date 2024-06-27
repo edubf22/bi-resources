@@ -199,7 +199,7 @@ IF(
 -- Calculate the number of days between two dates
 Days Between Dates = DATEDIFF( MIN( 'Date'[Date] ), MAX( 'Date'[Date] ), DAY )
 
--- Calculate moving average for sales
+-- Calculate moving average for sales, 90-day window
 Moving Average =
 AVERAGEX(
     DATESINPERIOD(
@@ -211,4 +211,5 @@ AVERAGEX(
     [Sales Total] /* This is a measure such as SUM ( 'Table'[Sales] ) */
 )
 
+-- Calculate Days on Hand (DOH) for inventory
 

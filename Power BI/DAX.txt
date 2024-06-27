@@ -199,4 +199,16 @@ IF(
 -- Calculate the number of days between two dates
 Days Between Dates = DATEDIFF( MIN( 'Date'[Date] ), MAX( 'Date'[Date] ), DAY )
 
+-- Calculate moving average for sales
+Moving Average =
+AVERAGEX(
+    DATESINPERIOD(
+        'Date'[Date],
+        LASTDATE( 'Date'[Date] ),
+        -2,
+        MONTH
+    ),
+    [Sales Total] /* This is a measure such as SUM ( 'Table'[Sales] ) */
+)
+
 

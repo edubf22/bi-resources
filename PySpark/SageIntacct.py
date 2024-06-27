@@ -1,16 +1,15 @@
 # Example in Python 3.5 to demonstrate how to use the Sage Intacct XML API
 from xml.dom.minidom import Document
-from XMLRequestClient import XMLRequestClient
+from XMLRequestClient import XMLRequestClient # This is a class that sends the XML request to the Sage Intacct API
 
-# Provide values for these variables for testing purposes. Never store
-# these in your application source code.
+# Provide values for these variables for testing purposes. Replace with actual values in application
 senderId = "myWebSenderId"
 senderPassword = "myWebPassword"
 sessionId = "mySessionId"
 
 try:
     # Write the XML request with the minidom  module
-    newdoc = Document();
+    newdoc = Document()
     request = newdoc.createElement('request')
     newdoc.appendChild(request)
     control = newdoc.createElement('control')

@@ -229,8 +229,23 @@ VAR TotalInventoryValue = SUM( 'Table'[InventoryValue] ) //  Total inventory val
 RETURN
 DIVIDE(TotalInventoryValue, AnnualizedAverageSales)
 
+-- Calculate DOH for inventory (forward)
+Forward DOH =
+VAR TotalInventoryValue = SUM( 'Table'[InventoryValue] ) 
+VAR AvgSellThroughSales = 
+AVERAGEX(
+    DATESINPERIOD(
+        'Date'[Date],
+        LASTDATE( 'Date'[Date] ),
+        -1, 
+        YEAR
+    ),
+    SUM( 'Table'[Sales] ) * (1 + [2YrRolling CAGR]) // See above for CAGR calculation
+)
+VAR AnnualizedAverageSales = AvgSellThroughSales * 12 / 365
 
-
-
-
-
+RETURN
+DIVIDE(
+    TotalInventoryValue,
+    AnnualizedAverageSales
+)

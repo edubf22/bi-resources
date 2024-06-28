@@ -208,8 +208,29 @@ AVERAGEX(
         -2,
         MONTH
     ),
-    [Sales Total] /* This is a measure such as SUM ( 'Table'[Sales] ) */
+    SUM( 'Table'[Sales] ) /* This is a measure such as SUM ( 'Table'[Sales] ) */
 )
 
--- Calculate Days on Hand (DOH) for inventory
+-- Calculate Days on Hand (DOH) for inventory (backwards 90-day sales window)
+Backward DOH = 
+VAR MovingAvgSales = 
+AVERAGEX(
+    DATESINPERIOD(
+        'Date'[Date],
+        LASTDATE( 'Date'[Date] ),
+        -90,
+        DAY
+    ),
+    SUM( 'Table'[Sales] ) // Total sales for the period
+)
+VAR AnnualizedAverageSales = MovingAvgSales * 12 / 365 // This gets average sales per day
+VAR TotalInventoryValue = SUM( 'Table'[InventoryValue] ) //  Total inventory value
+
+RETURN
+DIVIDE(TotalInventoryValue, AnnualizedAverageSales)
+
+
+
+
+
 

@@ -229,6 +229,17 @@ VAR TotalInventoryValue = SUM( 'Table'[InventoryValue] ) //  Total inventory val
 RETURN
 DIVIDE(TotalInventoryValue, AnnualizedAverageSales)
 
+-- Calculate previous year backwards DOH (assume 90-day window)
+AVERAGEX(
+    DATESINPERIOD(
+        'Date'[Date],
+        LASTDATE( SAMEPERIODLASTYEAR('Date'[Date]) ),
+        -90,
+        DAY
+    ),
+    CALCULATE( [Sales Total], SAMEPERIODLASTYEAR( 'Date'[Date] ))
+) 
+
 -- Calculate DOH for inventory (forward)
 Forward DOH =
 VAR TotalInventoryValue = SUM( 'Table'[InventoryValue] ) 

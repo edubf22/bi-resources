@@ -233,12 +233,13 @@ DIVIDE(TotalInventoryValue, AnnualizedAverageSales)
 AVERAGEX(
     DATESINPERIOD(
         'Date'[Date],
-        LASTDATE( SAMEPERIODLASTYEAR('Date'[Date]) ),
+        LASTDATE( SAMEPERIODLASTYEAR('Date'[Date] )),
         -90,
         DAY
     ),
     CALCULATE( [Sales Total], SAMEPERIODLASTYEAR( 'Date'[Date] )) // [Sales Total] is a measure for total sales
 ) 
+
 
 -- Calculate DOH for inventory (forward)
 Forward DOH =
@@ -260,3 +261,30 @@ DIVIDE(
     TotalInventoryValue,
     AnnualizedAverageSales
 )
+
+-- Calculate Previous Year Forward DOH
+Previous Forward DOH = 
+VAR TotalInventoryValuePY = CALCULATE(
+    SUM( 'Inventory'[Inventory Value] ),
+    SAMEPERIODLASTYEAR( 'Date'[Date] )
+)
+VAR AvgSellThroughSalesPY = 
+AVERAGEX(
+    DATESINPERIOD(
+        'Date'[Date],
+        LASTDATE( SAMEPERIODLASTYEAR('Date'[Date] )),
+        -1, 
+        YEAR
+        ),
+    CALCULATE( 
+        [Sales Total] * (1 + [2YrRolling CAGR SThrough]), 
+        SAMEPERIODLASTYEAR( 'Date'[Date] )
+        )
+)
+VAR AnnualizedAverageSalesPY = AvgSellThroughSalesPY * 12 / 365
+
+RETURN
+    DIVIDE(
+        TotalInventoryValuePY,
+        AnnualizedAverageSalesPY
+    )

@@ -237,7 +237,7 @@ AVERAGEX(
         -90,
         DAY
     ),
-    CALCULATE( [Sales Total], SAMEPERIODLASTYEAR( 'Date'[Date] ))
+    CALCULATE( [Sales Total], SAMEPERIODLASTYEAR( 'Date'[Date] )) // [Sales Total] is a measure for total sales
 ) 
 
 -- Calculate DOH for inventory (forward)

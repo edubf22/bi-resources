@@ -277,7 +277,7 @@ AVERAGEX(
         YEAR
         ),
     CALCULATE( 
-        [Sales Total] * (1 + [2YrRolling CAGR SThrough]), 
+        [Sales Total] * (1 + [2YrRolling CAGR SThrough]), // See above for CAGR calculation
         SAMEPERIODLASTYEAR( 'Date'[Date] )
         )
 )
@@ -288,3 +288,10 @@ RETURN
         TotalInventoryValuePY,
         AnnualizedAverageSalesPY
     )
+
+-- Calculate Forward L12M Average DOH
+Forward L12M AVG DOH = 
+DIVIDE(
+    SUM( 'Table'[Inventory Value] ),
+    [Sales L12M] * ( 1 + [vs L12M Growth %] ) / 365 // for info on how to calculate [Sales L12M] and [vs L12M Growth %], see above
+)

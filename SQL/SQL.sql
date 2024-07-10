@@ -83,7 +83,7 @@ WITH E1(N) AS (
 ), cteDateRangeKeys AS (
 	SELECT 'start' = CAST( MIN( [DateKEY] ) AS CHAR(8) )
 	,'end' = CAST( MAX( [DateKEY] ) AS CHAR(8) )
-	FROM [dbo].[fact tablename]
+	FROM [dbo].[fact tablename] /* replace with actual fact table */
 ), cteDateRange AS (
 	SELECT 'start' = DATEFROMPARTS( LEFT( [start], 4 ), SUBSTRING( [start], 5, 2 ), RIGHT( [start], 2 ) )
 	, 'end' = DATEFROMPARTS( LEFT( [end], 4 ), SUBSTRING( [end], 5, 2 ), RIGHT( [end],2 ) )
@@ -143,3 +143,23 @@ SELECT
     , Column2
     , Column3
 FROM <lakehousename>.<schemaname>.<tablename>;
+
+-- Append two tables in the same Fabric workspace
+SELECT
+    Column1
+    ,Column2
+    ,Column3 AS [Column Name]
+    ,DateKEY
+FROM <lakehousename>.<schemaname>.<tablename> /*this could be a table with current data*/
+WHERE Column3 <> 'DO NOT USE' /* filter out unwanted values, don't use alias*/
+
+UNION ALL
+
+SELECT
+    Column1
+    ,Column2
+    ,Column3 AS [Column Name]
+    ,DateKEY
+FROM <lakehousename>.<schemaname>.<tablename> /*this could be a table with historical data*/
+WHERE Column3 <> 'DO NOT USE' 
+AND DateKEY NOT IN (20240501, 20240401, 20240301, 20240201) /* filter out multiple dates by using a NOT IN clause)

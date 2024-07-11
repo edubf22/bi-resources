@@ -175,6 +175,12 @@ Sales QTD = CALCULATE(
     DATESQTD( 'Date'[Date] ) 
 )
 
+-- Sales for a specific order type
+Sales OrderType = CALCULATE( 
+    SUM( 'Table'[column] ), 
+    'Table'[OrderType] = "specific order type" 
+)
+
 -- Dynamically show a measure based on a slicer selection
 -- This example uses Sales Periods, such as Last Month, QTD, FYTD, etc.
 -- First, create table with index columns and measure names in Power Query using the "enter Data" option
@@ -295,3 +301,6 @@ DIVIDE(
     SUM( 'Table'[Inventory Value] ),
     [Sales L12M] * ( 1 + [vs L12M Growth %] ) / 365 // for info on how to calculate [Sales L12M] and [vs L12M Growth %], see above
 )
+
+-- Calculate Previous Year Forward L12M Average DOH
+

@@ -166,4 +166,5 @@ AND DateKEY NOT IN (20240501, 20240401, 20240301, 20240201) /* filter out multip
 
 -- Create start of month key column
 UPDATE YourTableName
-SET StartOfMonthKey = CONCAT(SUBSTRING(DateKey, 1, 6), '01');
+SET StartOfMonthKey = CONCAT(SUBSTRING(DateKey, 1, 6), '01'); -- Not preferred since this creates a string
+SET StartOfMonthKey = DATEFROMPARTS([Year], [Month Number], 1 -- Use this when month number and year are available

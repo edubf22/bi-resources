@@ -29,3 +29,5 @@ spark.catalog.dropTempView("<TempViewName>")
 # Rename a column 
 df = df.withColumnRenamed("OriginalName", "NewName")
 display(df)
+
+# 

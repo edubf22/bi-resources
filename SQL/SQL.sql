@@ -162,4 +162,8 @@ SELECT
     ,DateKEY
 FROM <lakehousename>.<schemaname>.<tablename> /*this could be a table with historical data*/
 WHERE Column3 <> 'DO NOT USE' 
-AND DateKEY NOT IN (20240501, 20240401, 20240301, 20240201) /* filter out multiple dates by using a NOT IN clause)
+AND DateKEY NOT IN (20240501, 20240401, 20240301, 20240201) /* filter out multiple dates by using a NOT IN clause)*/
+
+-- Create start of month key column
+UPDATE YourTableName
+SET StartOfMonthKey = CONCAT(SUBSTRING(DateKey, 1, 6), '01');

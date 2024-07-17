@@ -48,3 +48,57 @@ ax.set_yticklabels(['Specs', 'Within', 'Overall'], fontsize = 15)
 
 # Show the plot
 plt.show() 
+
+############################################################################################
+
+# Send an XML POST Request to Sage Intacct API
+import requests
+from datetime import datetime
+import uuid
+
+# Define your variables
+sender_id = 'your_sender_id'
+sender_password = 'your_sender_password'
+user_id = 'your_user_id'
+company_id = 'your_company_id'
+temp_slide_in = 'your_temp_slide_in' # Optional, leave as empty string if not used
+user_password = 'your_user_password'
+
+# Prepare your XML data
+data = f'''<?xml version="1.0" encoding="UTF-8"?>
+<request>
+  <control>
+    <senderid>{sender_id}</senderid>
+    <password>{sender_password}</password>
+    <controlid>{datetime.now().isoformat()}</controlid>
+    <uniqueid>false</uniqueid>
+    <dtdversion>3.0</dtdversion>
+    <includewhitespace>false</includewhitespace>
+  </control>
+  <operation>
+    <authentication>
+      <login>
+        <userid>{user_id}</userid>
+        <companyid>{company_id}{temp_slide_in}</companyid>
+        <password>{user_password}</password>
+      </login>
+    </authentication>
+    <content>
+      <function controlid="{str(uuid.uuid4())}">
+        <getAPISession />
+      </function>
+    </content>
+  </operation>
+</request>'''
+
+# Define your headers
+headers = {'Content-Type': 'application/xml'}  # or whatever your server accepts
+
+# Define your URL
+url = 'your_url'
+
+# Send the POST request
+response = requests.post(url, headers=headers, data=data)
+
+# Print the response
+print(response.text)

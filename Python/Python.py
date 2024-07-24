@@ -100,3 +100,22 @@ response = requests.post(url, headers=headers, data=data)
 
 # Print the response
 print(response.text)
+
+# Parse XML data using ElementTree
+import xml.etree.ElementTree as ET
+
+root = ET.fromstring(response.content)
+
+# Navigate the XML tree
+for child in root:
+    print(child.tag, child.attrib)
+
+# Iterate over elements in a list
+[elem.tag for elem in root.iter()]
+
+# Find the sessionid element
+sessionid_element = root.find(".//sessionid")
+
+# Get the sessionid value
+sessionid = sessionid_element.text
+print(sessionid)

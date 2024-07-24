@@ -57,6 +57,7 @@ from datetime import datetime
 import uuid
 
 # Define your variables
+url = 'your_url'
 sender_id = 'your_sender_id'
 sender_password = 'your_sender_password'
 user_id = 'your_user_id'
@@ -93,9 +94,6 @@ data = f'''<?xml version="1.0" encoding="UTF-8"?>
 
 # Define your headers
 headers = {'Content-Type': 'application/xml'}  # or whatever your server accepts
-
-# Define your URL
-url = 'your_url'
 
 # Send the POST request
 response = requests.post(url, headers=headers, data=data)

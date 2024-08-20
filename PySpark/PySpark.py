@@ -30,4 +30,5 @@ spark.catalog.dropTempView("<TempViewName>")
 df = df.withColumnRenamed("OriginalName", "NewName")
 display(df)
 
-# 
+# List the tables in the lakehouse
+spark.catalog.listTables("<LakehouseName>")

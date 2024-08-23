@@ -1,0 +1,12 @@
+// Convert to Base 64
+# Specify the path to the file you want to encode
+$filePath = "C:\path\to\your\file.ext"
+ 
+# Read the contents of the file as a byte array
+$fileBytes = [System.IO.File]::ReadAllBytes($filePath)
+ 
+# Convert the byte array to a Base64 string
+$base64String = [Convert]::ToBase64String($fileBytes)
+ 
+# Output the Base64 encoded string (or save it to a file)
+$base64String | Out-File "C:\path\to\your\output.txt"

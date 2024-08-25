@@ -168,3 +168,18 @@ AND DateKEY NOT IN (20240501, 20240401, 20240301, 20240201) /* filter out multip
 UPDATE YourTableName
 SET StartOfMonthKey = CONCAT(SUBSTRING(DateKey, 1, 6), '01'); -- Not preferred since this creates a string
 SET StartOfMonthKey = DATEFROMPARTS([Year], [Month Number], 1 -- Use this when month number and year are available
+
+
+-- Calculate average number of streams since release date
+SELECT 
+    TrackName,
+    ArtistName,
+    ReleaseDate,
+    Streams,
+    DATEDIFF(day, ReleaseDate, CURRENT_DATE()) AS days_since_release,
+    CASE 
+        WHEN DATEDIFF(day, ReleaseDate, CURRENT_DATE()) = 0 THEN Streams
+        ELSE Streams / NULLIF(DATEDIFF(day, ReleaseDate, CURRENT_DATE()), 0)
+    END AS average_streams_per_day
+FROM 
+    cleansed_data;

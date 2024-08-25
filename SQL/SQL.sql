@@ -172,14 +172,95 @@ SET StartOfMonthKey = DATEFROMPARTS([Year], [Month Number], 1 -- Use this when m
 
 -- Calculate average number of streams since release date
 SELECT 
-    TrackName,
-    ArtistName,
-    ReleaseDate,
-    Streams,
-    DATEDIFF(day, ReleaseDate, CURRENT_DATE()) AS days_since_release,
+    TrackName
+    ,ArtistName
+    ,ReleaseDate /* Date based on release year, month and day fields */
+    ,Streams
+    ,DATEDIFF(day, ReleaseDate, CURRENT_DATE()) AS days_since_release,
     CASE 
         WHEN DATEDIFF(day, ReleaseDate, CURRENT_DATE()) = 0 THEN Streams
         ELSE Streams / NULLIF(DATEDIFF(day, ReleaseDate, CURRENT_DATE()), 0)
     END AS average_streams_per_day
 FROM 
     cleansed_data;
+
+-- Create cases to group into seasons
+SELECT 
+    CASE 
+        WHEN ReleaseMonth IN (12, 1, 2) THEN 'Winter'
+        WHEN ReleaseMonth IN (3, 4, 5) THEN 'Spring'
+        WHEN ReleaseMonth IN (6, 7, 8) THEN 'Summer'
+        ELSE 'Fall'
+    END AS season,
+    AVG(Streams) AS avg_streams_per_season
+FROM 
+    cleansed_data
+GROUP BY 
+    CASE 
+        WHEN ReleaseMonth IN (12, 1, 2) THEN 'Winter'
+        WHEN ReleaseMonth IN (3, 4, 5) THEN 'Spring'
+        WHEN ReleaseMonth IN (6, 7, 8) THEN 'Summer'
+        ELSE 'Fall'
+    END;
+
+-- Another example based on count of streams
+%%sql
+SELECT 
+    CASE 
+        WHEN ReleaseMonth IN (12, 1, 2) THEN 'Winter'
+        WHEN ReleaseMonth IN (3, 4, 5) THEN 'Spring'
+        WHEN ReleaseMonth IN (6, 7, 8) THEN 'Summer'
+        ELSE 'Fall'
+    END AS season,
+    COUNT(TrackName) AS track_count_per_season
+FROM 
+    cleansed_data
+GROUP BY 
+    CASE 
+        WHEN ReleaseMonth IN (12, 1, 2) THEN 'Winter'
+        WHEN ReleaseMonth IN (3, 4, 5) THEN 'Spring'
+        WHEN ReleaseMonth IN (6, 7, 8) THEN 'Summer'
+        ELSE 'Fall'
+    END;
+
+-- Create a subquery to limit the rows returned to the top 50 by a given criteria
+SELECT 
+    Key
+    ,COUNT(*)
+FROM (
+    SELECT 
+        Key
+        ,Streams
+    FROM cleansed_data
+    WHERE Key IS NOT NULL
+    ORDER BY Streams DESC
+    LIMIT 100
+) AS top_100
+GROUP BY Key
+ORDER BY COUNT(*) DESC; 
+
+-- Create a Common Table Expression (CTE) to bin the data into BPM groups
+WITH bpm_bins AS ( 
+    SELECT 
+        CAST(FLOOR(BPM / 20.0) * 20 AS INT) AS BPM_bin_start
+        ,CAST(FLOOR(BPM / 20.0) * 20 + 19 AS INT) AS BPM_bin_end
+        ,CONCAT(CAST(FLOOR(BPM / 20.0) * 20 AS STRING), '-', CAST(FLOOR(BPM / 20.0) * 20 + 19 AS STRING)) AS BPM_bin
+        ,COUNT(TrackName) AS num_songs_in_bin
+        ,SUM(Streams) AS total_streams_in_bin
+    FROM 
+        cleansed_data
+    GROUP BY 
+        CAST(FLOOR(BPM / 20.0) * 20 AS INT),
+        CAST(FLOOR(BPM / 20.0) * 20 + 19 AS INT),
+        CONCAT(CAST(FLOOR(BPM / 20.0) * 20 AS STRING), '-', CAST(FLOOR(BPM / 20.0) * 20 + 19 AS STRING))
+) 
+
+SELECT 
+    BPM_bin_start
+    ,BPM_bin_end
+    ,BPM_bin
+    ,total_streams_in_bin / num_songs_in_bin AS normalized_streams_per_song
+FROM 
+    bpm_bins
+ORDER BY 
+    BPM_bin_start ASC;

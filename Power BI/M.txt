@@ -98,8 +98,8 @@ let
   #"Filtered Rows" = Table.SelectRows(
     Source, 
     each ([Folder Path] = "<Target Folder Path>") 
-    and Text.StartsWith([Name], "<Prefix if any", Comparer.OrdinalIgnoreCase)
-    and Text.Contains([Name], "<Target substring", Comparer.OrdinalIgnoreCase)
+    and Text.StartsWith([Name], "<Prefix if any>", Comparer.OrdinalIgnoreCase)
+    and Text.Contains([Name], "<Target substring>", Comparer.OrdinalIgnoreCase)
   )
 in
   #"Filtered Rows"

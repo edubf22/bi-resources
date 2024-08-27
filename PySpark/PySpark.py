@@ -32,3 +32,19 @@ display(df)
 
 # List the tables in the lakehouse
 spark.catalog.listTables("<LakehouseName>")
+
+# Check for duplicates v1
+"""
+First group by all columns and count, then show duplicate rows
+"""
+from pyspark.sql.functions import col
+
+df_duplicates = df.groupBy(df.columns).count().filter(col("count") > 1)
+df_duplicates.show()
+
+# Check for duplicates v2
+""" 
+Find duplicate rows, then show them
+"""
+df_duplicates = df.exceptAll(df.dropDuplicates())
+df_duplicates.show()

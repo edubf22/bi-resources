@@ -264,3 +264,22 @@ FROM
     bpm_bins
 ORDER BY 
     BPM_bin_start ASC;
+
+-- Dynamically check a table for duplicate rows (assuming there is no unique ID) 
+-- First get list of columns, then construct the SQL query, and finally execute the query
+DECLARE @sql NVARCHAR(MAX);
+DECLARE @columns NVARCHAR(MAX);
+
+SELECT @columns = STRING_AGG(column_name, ', ')
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'table_name';
+
+SET @sql = 'SELECT *, COUNT(*) FROM table_name GROUP BY ' + @columns + ' HAVING COUNT(*) > 1';
+
+EXEC sp_executesql @sql;
+
+-- Check for duplicates in specific columns (used when a column has a unique ID)
+SELECT column1, column2, COUNT(*)
+FROM table_name
+GROUP BY column1, column2
+HAVING COUNT(*) > 1;

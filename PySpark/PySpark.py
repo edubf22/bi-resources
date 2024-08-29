@@ -48,3 +48,34 @@ Find duplicate rows, then show them
 """
 df_duplicates = df.exceptAll(df.dropDuplicates())
 df_duplicates.show()
+
+# List all files in a directory and store the name of the latest file
+import os
+
+def get_latest_file(directory):
+    """
+    Input: directory path
+    Output: filename for the most recent file in the directory
+    """
+    files = os.listdir(directory)
+    
+    # Initialize variables to track the latest file and its timestamp
+    latest_file = ""
+    latest_timestamp = 0
+    
+    # Iterate through all files to find the one with the latest timestamp
+    for file in files:
+        file_path = os.path.join(directory, file)
+        file_timestamp = os.path.getctime(file_path)
+        
+        if file_timestamp > latest_timestamp:
+            latest_timestamp = file_timestamp
+            latest_file = file
+    
+    return latest_file
+
+# Join directory and filename
+file_path = os.path.join("<directory path>", "<filename>")
+
+# Load JSON into a DataFrame
+df = spark.read.option("multiline", "false").json(file_path) # check if file is multiline or not, false by default

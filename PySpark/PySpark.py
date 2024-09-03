@@ -79,3 +79,22 @@ file_path = os.path.join("<directory path>", "<filename>")
 
 # Load JSON into a DataFrame
 df = spark.read.option("multiline", "false").json(file_path) # check if file is multiline or not, false by default
+
+# List all files in a folder
+"""
+First define target folder, then list all files in the folder using os library, then print the names of the files
+"""
+import os
+
+root_folder = "/lakehouse/default/Files" # Define root folder
+
+files = [] # List all of the files in the root folder
+
+for file in os.listdir(root_folder): # Iterate through all files in the root folder and append to the list
+    if os.path.isfile(os.path.join(root_folder, file)):
+        files.append(file)
+    else:
+        pass
+
+for file in files: # Print the names of the files
+    print(file)

@@ -98,3 +98,28 @@ for file in os.listdir(root_folder): # Iterate through all files in the root fol
 
 for file in files: # Print the names of the files
     print(file)
+
+# Move files from one folder to another
+"""
+This example shows how to move files from a folder to a new subfolder based on the current date
+"""
+import os
+from datetime import datetime
+import shutil
+
+root_folder = "/lakehouse/default/Files" # Define root and subfolder paths
+subfolder = "/lakehouse/default/Files/purefacts"
+
+current_date = datetime.now().strftime("%Y%m%d") # Get current date to name target folder
+target_folder = os.path.join(subfolder, current_date)
+
+os.makedirs(target_folder, exist_ok=True) # Create target folder if it doesn't exist
+
+files = [f for f in os.listdir(root_folder) if os.path.isfile(os.path.join(root_folder, f))] # List all files in the root folder
+
+for file in files: # Move each file to the target folder
+    source_path = os.path.join(root_folder, file)
+    target_path = os.path.join(target_folder, file)
+    shutil.move(source_path, target_path)
+
+print(f"Moved {len(files)} files to {target_folder}") # Print the status of the move operation

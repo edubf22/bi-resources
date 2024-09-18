@@ -123,3 +123,11 @@ for file in files: # Move each file to the target folder
     shutil.move(source_path, target_path)
 
 print(f"Moved {len(files)} files to {target_folder}") # Print the status of the move operation
+
+# Try-except block
+try:
+    # Append the DataFrame to the existing lakehouse table
+    df.write.format("delta").mode("append").saveAsTable("<tablename>")
+    print("Data merged successfully")
+except Exception as e:
+    print(f"An error occurred while merging data: {e}")

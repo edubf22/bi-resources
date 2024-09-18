@@ -1,0 +1,3 @@
+// This code snippet retrieves the "AuthKey" value from the response of a Postman request and sets it as an environment variable.
+const response = pm.response.json();
+pm.environment.set("AuthKey", response.AuthKey);

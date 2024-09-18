@@ -119,3 +119,7 @@ sessionid_element = root.find(".//sessionid")
 # Get the sessionid value
 sessionid = sessionid_element.text
 print(sessionid)
+
+# Split a string 
+filename = "example_file.txt"
+filename_split = filename.split("_") # Split the filename by underscore, or the type by using "." as the delimiter"

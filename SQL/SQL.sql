@@ -283,3 +283,6 @@ SELECT column1, column2, COUNT(*)
 FROM table_name
 GROUP BY column1, column2
 HAVING COUNT(*) > 1;
+
+-- Cast type when a column has NULL text values
+TRY_CAST(<TableName> AS FLOAT) as <TableAlias>;
